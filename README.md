@@ -1,14 +1,14 @@
 # testmakefile
 
 .PHONY: all, install, clean    
- TARGET=sum  
- HDRS+= sum.h  
- CSRCS+= main.c sum.c  
- CPPSRCS+=    
+ TARGET:=sum  
+ -include ./src/src.mk  
+ CSRCS+= main.c  
  OBJSDIR=./build  
  OBJS:= $(patsubst %.cpp, $(OBJSDIR)/%.o, $(CPPSRCS))  
  OBJS+= $(patsubst %.c, $(OBJSDIR)/%.o, $(CSRCS))  
- CFLAGS += -I./include -DDEBUG -Wall -g  
+ INCDIR+= -I./src  
+ CFLAGS += -DDEBUG -Wall -g  
  LDFLAGS += -L./lib -lm  
  CC:= gcc  
  CXX:= g++  
@@ -20,13 +20,13 @@
  $(OBJSDIR)/%.o: %.c $(HDRS)  
       @echo " [CC]  $@"  
       @mkdir -p $(shell dirname $@)  
-      @$(CC) -c $< -o $@ $(CFLAGS)  
+      @$(CC) -c $< -o $@ $(CFLAGS) ${INCDIR}  
  $(OBJSDIR)/%.o: %.cpp $(HDRS)  
       @echo " [CXX] $@"  
       @mkdir -p $(shell dirname $@)  
-      @$(CXX) -c $< -o $@ $(CFLAGS)  
- install:
-      cp -rf ${TARGET} /usr/local/bin   
+      @$(CXX) -c $< -o $@ $(CFLAGS) ${INCDIR}  
+ install:  
+      cp -rf ${TARGET} /usr/local/bin      
  clean:  
-      rm -rf ${OBJSDIR}/*.o  
+      rm -rf ${OBJSDIR}  
       rm -rf ${TARGET}  
